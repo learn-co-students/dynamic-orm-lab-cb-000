@@ -4,7 +4,7 @@ require 'pry'
 
 class InteractiveRecord
 
-	def initialize(options = {}) #
+	def initialize(options = {}) 
 		options.each do |key, value|
 			self.send("#{key}=", value)
 		end
@@ -17,11 +17,11 @@ class InteractiveRecord
 	    @id = DB[:conn].execute("SELECT last_insert_rowid() FROM #{table_name_for_insert}")[0][0]
   	end
 
-	def self.table_name #
+	def self.table_name 
 		self.to_s.downcase.pluralize
 	end
 
-	def self.column_names #
+	def self.column_names 
 		DB[:conn].results_as_hash = true #=>NOT .results_by_hash
 
 		sql = "pragma table_info('#{table_name}')"
@@ -34,15 +34,15 @@ class InteractiveRecord
 		column_names.compact
 	end
 
-	def table_name_for_insert #
+	def table_name_for_insert 
 		self.class.table_name
 	end
 
-	def col_names_for_insert #
+	def col_names_for_insert 
 		self.class.column_names.delete_if {|col| col == "id"}.join(", ")
 	end
 
-	def values_for_insert #
+	def values_for_insert 
 		values = []
 		self.class.column_names.each do |col_name|
 			values << "'#{send(col_name)}'" unless send(col_name).nil?
