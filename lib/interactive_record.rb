@@ -4,17 +4,17 @@ require 'pry'
 
 class InteractiveRecord
 
-	def initialize(options = {})
+	def initialize(options = {}) #3
 		options.each do |attr, value|
 			self.send("#{attr}=", value)
 		end
 	end
 
-	def self.table_name
+	def self.table_name #1
 		self.to_s.downcase.pluralize
 	end
 
-	def self.column_names
+	def self.column_names #2
 		DB[:conn].results_as_hash = true
 
 		sql = "pragma table_info(#{table_name})"
@@ -28,15 +28,15 @@ class InteractiveRecord
 		column_names.compact
 	end
 
-	def table_name_for_insert
+	def table_name_for_insert #5
 		self.class.table_name
 	end
 
-	def col_names_for_insert
+	def col_names_for_insert #6
 		self.class.column_names.delete_if {|col| col == "id"}.join(", ")
 	end
 
-	def values_for_insert
+	def values_for_insert  #7
 		values = []
 
 		self.class.column_names.each do |col_name|
@@ -46,7 +46,7 @@ class InteractiveRecord
 		values.join(", ") #=> "Andrew", "10"
 	end
 
-	def save
+	def save #8
 		sql = <<-SQL
 		INSERT INTO #{table_name_for_insert} (#{col_names_for_insert})
 		VALUES (#{values_for_insert})
@@ -66,12 +66,15 @@ class InteractiveRecord
 		sql = "SELECT * FROM #{table_name} WHERE name = '#{name}'" 
 		DB[:conn].execute(sql)
 	end
-
-
-
   
 end
 
-# INSERT INTO #{table_name_for_insert} (#{col_names_for_insert}) VALUES (#{values_for_insert})
-
-#INSERT INTO interactiverecords (name, grade) VALUES ("Andrew", 10)
+#ORDER OF METHODS TO CREATE.....
+# 1. self.table_name
+# 2. self.column_names
+# 3. initialize
+# 4. set attr_accessor of Class
+# 5. table_name_for_insert
+# 6. column_name_for_insert
+# 7. values_for_insert
+# 8. save
