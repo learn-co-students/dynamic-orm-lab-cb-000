@@ -38,23 +38,21 @@ class InteractiveRecord
 
 	def values_for_insert  #7
 		values = []
-
 		self.class.column_names.each do |col_name|
 			values << "'#{send(col_name)}'" unless send(col_name).nil?
-			# ["'Andrew'", "'10'"]
 		end
-		values.join(", ") #=> "Andrew", "10"
+		values.join(", ")
 	end
 
 	def save #8
-		sql = <<-SQL
-		INSERT INTO #{table_name_for_insert} (#{col_names_for_insert})
-		VALUES (#{values_for_insert})
-		SQL
+	  sql = <<-SQL 
+	  INSERT INTO #{table_name_for_insert} (#{col_names_for_insert})
+	  VALUES (#{values_for_insert})
+	  SQL
 
-		DB[:conn].execute(sql)
+	  DB[:conn].execute(sql)
 
-		@id = DB[:conn].execute("SELECT last_insert_rowid() FROM #{table_name_for_insert}")[0][0]
+	  @id = DB[:conn].execute("SELECT last_insert_rowid()")[0][0]
 	end
 
 	def self.find_by(attribute)
