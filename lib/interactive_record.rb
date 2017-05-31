@@ -54,8 +54,7 @@ class InteractiveRecord
       FROM '#{table_name}'
       WHERE name = ?
     SQL
-    row = DB[:conn].execute(sql, name)
-
+    row = DB[:conn].execute(sql, name)=
   end
 
   def table_name_for_insert
