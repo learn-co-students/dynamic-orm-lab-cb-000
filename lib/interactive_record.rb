@@ -61,6 +61,7 @@ class InteractiveRecord
     self.class.table_name
   end
 
+
   def self.find_by(option)
     key, value = option.first
     sql = <<-SQL
