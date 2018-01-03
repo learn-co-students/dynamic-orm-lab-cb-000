@@ -63,8 +63,10 @@ class InteractiveRecord
   def self.find_by(attribute)
     column_name = attribute.keys[0].to_s
     column_value = attribute[attribute.keys[0]]
-    puts column_name
-    puts column_value
+    if column_value.class == String
+      column_value = "'#{column_value}'"
+    end
+
     sql = <<-SQL
       SELECT * FROM #{self.table_name} WHERE #{column_name} = #{column_value} LIMIT 1
       SQL
