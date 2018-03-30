@@ -53,4 +53,11 @@ class InteractiveRecord
     DB[:conn].execute(sql)
   end
 
+  def self.find_by(hash)
+    key = hash.keys[0].to_s
+    val = hash[key.to_sym]
+    sql = "SELECT * FROM #{self.table_name} WHERE #{key} = '#{val}'"
+    DB[:conn].execute(sql)
+  end
+
 end
