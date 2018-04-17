@@ -2,10 +2,6 @@ require_relative "../config/environment.rb"
 require 'active_support/inflector'
 
 class InteractiveRecord
-  require_relative "../config/environment.rb"
-require 'active_support/inflector'
-
-class InteractiveRecord
 
   def self.table_name
     self.to_s.downcase.pluralize
@@ -18,9 +14,11 @@ class InteractiveRecord
 
     table_info = DB[:conn].execute(sql)
     column_names = []
+
     table_info.each do |row|
       column_names << row["name"]
     end
+
     column_names.compact
   end
 
@@ -59,20 +57,13 @@ class InteractiveRecord
 
   def self.find_by(attribute)
 
-    attribute.each do |key, value|
-      @key = key
-      @value = value
-    end
+    param = attribute.flatten
 
-    puts @key
-    puts @value
+    sql = "SELECT * FROM #{self.table_name} WHERE #{param[0]} = ?"
 
-  #  sql = "SELECT * FROM #{self.table_name} WHERE #{attribute} = ?"
-  #  DB[:conn].execute(sql, attribute)
+    DB[:conn].execute(sql, param[1])
 
   end
 
-
-end
 
 end
