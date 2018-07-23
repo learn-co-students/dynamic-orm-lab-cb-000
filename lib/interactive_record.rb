@@ -43,16 +43,29 @@ class InteractiveRecord
         values.join(", ")
     end
 
-    def ques_mark_for_insert
-        (self.class.column_names.count - 1).times.collect{"?"}.join(",")
-    end
-
     def save
         sql = <<-SQL
             INSERT INTO #{table_name_for_insert} (#{col_names_for_insert}) VALUES (#{values_for_insert})
         SQL
         DB[:conn].execute(sql)
         self.id = DB[:conn].execute("SELECT last_insert_rowid() FROM #{table_name_for_insert}")[0][0]
+    end
+
+    def self.find_by_name(name)
+        DB[:conn].results_as_hash
+        sql = <<-SQL
+            SELECT * FROM #{self.table_name} WHERE name = ?
+        SQL
+        DB[:conn].execute(sql, name)
+    end
+
+    def self.find_by(att_hash={})
+        key = att_hash.keys[0].to_s
+        value = att_hash[att_hash.keys[0]]
+        DB[:conn].results_as_hash
+        sql = "SELECT * FROM #{self.table_name} WHERE #{key} = #{value}"
+
+        key == "name" ? self.find_by_name(value) :  DB[:conn].execute(sql)
     end
 
 end
