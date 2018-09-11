@@ -12,7 +12,6 @@ class InteractiveRecord
   def self.column_names
     DB[:conn].results_as_hash = true
     sql = "pragma table_info('#{self.table_name}')"
-
     columns = []
     DB[:conn].execute(sql).each do |col|
       columns << col["name"]
@@ -20,12 +19,7 @@ class InteractiveRecord
 
     columns.compact
   end
-
-  # create attributes from column names
-  self.column_names.each do |col|
-    attr_accessor col.to_sym
-  end
-
+  
   # initialize attributes dynamically
   def initialize(data={})
     data.each do |key, value|
@@ -50,6 +44,7 @@ class InteractiveRecord
     values.join(", ")
   end
 
+  # Saves our current instance object and declares our @id attribute after inserting into the table
   def save
     sql ="
       INSERT INTO #{table_name_for_insert} (#{col_names_for_insert})
@@ -60,12 +55,14 @@ class InteractiveRecord
     @id = DB[:conn].execute("SELECT last_insert_rowid() FROM #{table_name_for_insert}")[0][0]
   end
 
+  # Since this method specifies its finding by name it the name column will be explicit
   def self.find_by_name(name)
     sql = "SELECT * FROM #{self.table_name} WHERE name = (?);"
 
     DB[:conn].execute(sql, name)
   end
 
+  # This method accepts a hash as an argument and returns a hash of rows
   def self.find_by(data={})
     data.each do |key, value|
       return DB[:conn].execute("SELECT * FROM #{self.table_name} WHERE #{key.to_s} = '#{value}'")
