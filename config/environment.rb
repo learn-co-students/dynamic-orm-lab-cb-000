@@ -1,4 +1,5 @@
 #WHY??: If I require the bundler to get Rakefile working, the 'active_support' will stop working!
+#To get rake console to work without require bundler, need to require pry within Rakefile (Why?)
 #require 'bundler'
 #Bundler.require
 
